@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: bytescroll
+      POSTGRES_USER: bytescroll
+      POSTGRES_PASSWORD: bytescroll
+    ports:
+      - "5432:5432"
+    volumes:
+      - bytescroll_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bytescroll"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  bytescroll_postgres:

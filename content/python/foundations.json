@@ -1,0 +1,172 @@
+[
+  {
+    "id": "py-var-001",
+    "type": "concept",
+    "level": "beginner",
+    "concept": "Variables",
+    "eyebrow": "Python foundations · Variables",
+    "title": "A variable is a label, not a box.",
+    "prompt": "Python names point to values. When a name is reassigned, it points to a new value. What is printed?",
+    "code": "score = 10\nscore = score + 5\nprint(score)",
+    "options": [
+      { "id": "a", "label": "10" },
+      { "id": "b", "label": "15" },
+      { "id": "c", "label": "score + 5" }
+    ],
+    "correct_option_id": "b",
+    "explanation": "The second line reads the current value, adds 5, then points score at the result: 15."
+  },
+  {
+    "id": "py-type-001",
+    "type": "predict",
+    "level": "beginner",
+    "concept": "Data types",
+    "eyebrow": "Python foundations · Numbers",
+    "title": "Division leaves a clue in the type.",
+    "prompt": "Predict both the value and its Python type.",
+    "code": "result = 6 / 2\nprint(result, type(result).__name__)",
+    "options": [
+      { "id": "a", "label": "3 int" },
+      { "id": "b", "label": "3.0 float" },
+      { "id": "c", "label": "3.0 int" }
+    ],
+    "correct_option_id": "b",
+    "explanation": "In Python 3, / always performs true division and returns a float—even when the result is a whole number."
+  },
+  {
+    "id": "py-str-001",
+    "type": "predict",
+    "level": "beginner",
+    "concept": "Strings",
+    "eyebrow": "Python foundations · Slicing",
+    "title": "The stop index stays outside.",
+    "prompt": "Python includes the start index and excludes the stop index. What does this slice produce?",
+    "code": "language = \"Python\"\nprint(language[1:4])",
+    "options": [
+      { "id": "a", "label": "Pyth" },
+      { "id": "b", "label": "yth" },
+      { "id": "c", "label": "ytho" }
+    ],
+    "correct_option_id": "b",
+    "explanation": "Indexes 1, 2, and 3 are y, t, and h. Index 4 is the excluded stopping point."
+  },
+  {
+    "id": "py-cond-001",
+    "type": "debug",
+    "level": "beginner",
+    "concept": "Conditionals",
+    "eyebrow": "Python foundations · Debugging",
+    "title": "Python reads structure through whitespace.",
+    "prompt": "This code raises an IndentationError. Which change fixes it?",
+    "code": "temperature = 72\nif temperature > 70:\nprint(\"Warm day\")",
+    "options": [
+      { "id": "a", "label": "Indent the print line" },
+      { "id": "b", "label": "Remove the colon" },
+      { "id": "c", "label": "Put temperature in quotes" }
+    ],
+    "correct_option_id": "a",
+    "explanation": "The body controlled by if must be indented. The colon is required and temperature should remain numeric."
+  },
+  {
+    "id": "py-list-001",
+    "type": "predict",
+    "level": "beginner",
+    "concept": "Lists",
+    "eyebrow": "Python foundations · Lists",
+    "title": "Some methods change in place.",
+    "prompt": "append changes the original list and returns None. What is printed?",
+    "code": "topics = [\"variables\"]\nresult = topics.append(\"loops\")\nprint(result)",
+    "options": [
+      { "id": "a", "label": "['variables', 'loops']" },
+      { "id": "b", "label": "loops" },
+      { "id": "c", "label": "None" }
+    ],
+    "correct_option_id": "c",
+    "explanation": "append mutates topics but does not return the updated list. Its return value is None."
+  },
+  {
+    "id": "py-var-002",
+    "type": "quiz",
+    "level": "beginner",
+    "concept": "Variables",
+    "eyebrow": "Python foundations · Assignment",
+    "title": "Python can swap without a temporary variable.",
+    "prompt": "After this simultaneous assignment, what are a and b?",
+    "code": "a = 2\nb = 7\na, b = b, a",
+    "options": [
+      { "id": "a", "label": "a is 2, b is 7" },
+      { "id": "b", "label": "a is 7, b is 2" },
+      { "id": "c", "label": "Both are 7" }
+    ],
+    "correct_option_id": "b",
+    "explanation": "Python evaluates the values on the right first, then assigns them to the names on the left."
+  },
+  {
+    "id": "py-type-002",
+    "type": "predict",
+    "level": "beginner",
+    "concept": "Data types",
+    "eyebrow": "Python foundations · Conversion",
+    "title": "Input-like text needs conversion before math.",
+    "prompt": "int converts numeric text into an integer. What does this print?",
+    "code": "age_text = \"7\"\nprint(int(age_text) + 3)",
+    "options": [
+      { "id": "a", "label": "73" },
+      { "id": "b", "label": "10" },
+      { "id": "c", "label": "A TypeError" }
+    ],
+    "correct_option_id": "b",
+    "explanation": "int('7') produces the integer 7, so Python performs numeric addition: 7 + 3 = 10."
+  },
+  {
+    "id": "py-str-002",
+    "type": "debug",
+    "level": "beginner",
+    "concept": "Strings",
+    "eyebrow": "Python foundations · Immutability",
+    "title": "A string cannot be edited in place.",
+    "prompt": "How should this code create the value 'cat' without an error?",
+    "code": "word = \"bat\"\nword[0] = \"c\"",
+    "options": [
+      { "id": "a", "label": "word = 'c' + word[1:]" },
+      { "id": "b", "label": "word[0].replace('c')" },
+      { "id": "c", "label": "mutable(word)[0] = 'c'" }
+    ],
+    "correct_option_id": "a",
+    "explanation": "Strings are immutable. Build a new string from 'c' and the slice 'at', then reassign word."
+  },
+  {
+    "id": "py-cond-002",
+    "type": "predict",
+    "level": "beginner",
+    "concept": "Conditionals",
+    "eyebrow": "Python foundations · Comparisons",
+    "title": "Comparisons can form a readable chain.",
+    "prompt": "What does this range check print?",
+    "code": "score = 82\nprint(70 <= score < 90)",
+    "options": [
+      { "id": "a", "label": "True" },
+      { "id": "b", "label": "False" },
+      { "id": "c", "label": "A SyntaxError" }
+    ],
+    "correct_option_id": "a",
+    "explanation": "82 is at least 70 and less than 90, so both parts of the chained comparison are true."
+  },
+  {
+    "id": "py-list-002",
+    "type": "quiz",
+    "level": "beginner",
+    "concept": "Lists",
+    "eyebrow": "Python foundations · Indexing",
+    "title": "Negative indexes count from the end.",
+    "prompt": "Which item does -1 retrieve?",
+    "code": "steps = [\"learn\", \"practice\", \"build\"]\nprint(steps[-1])",
+    "options": [
+      { "id": "a", "label": "learn" },
+      { "id": "b", "label": "practice" },
+      { "id": "c", "label": "build" }
+    ],
+    "correct_option_id": "c",
+    "explanation": "Index -1 means the final item, -2 the second-to-last, and so on."
+  }
+]

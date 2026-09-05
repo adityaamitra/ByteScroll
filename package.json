@@ -1,0 +1,16 @@
+{
+  "name": "bytescroll",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @bytescroll/web",
+    "build": "npm run build --workspace @bytescroll/web",
+    "typecheck": "npm run typecheck --workspace @bytescroll/web"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
