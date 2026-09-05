@@ -4,7 +4,7 @@
 
 [**Try the live app →**](https://bytescroll.vercel.app)
 
-ByteScroll is a mobile-first learning feed that replaces passive morning scrolling with short, structured Python and system design lessons. Every Daily 10 session teaches first, shows a concrete example, asks the learner to try, explains the result, and ends on purpose.
+ByteScroll is a mobile-first learning feed that replaces passive morning scrolling with short, structured Python and system design lessons. Every session teaches first, shows a concrete example, asks the learner to try, explains the result, and pauses at a learner-chosen checkpoint.
 
 ## Why ByteScroll
 
@@ -18,17 +18,21 @@ Learn → See → Try → Understand → Review → Stop
 - Explanations come before fair, focused questions.
 - Wrong answers generate targeted feedback and a review item.
 - Python and system design maintain independent mastery paths.
-- The feed ends after ten cards.
+- Sessions start with 5, 10, or 20 cards, then continue in optional five-card blocks.
 
 ## Current experience
 
-- Mobile-first Daily 10 interface with persistent bottom navigation
+- Mobile-first learning interface with persistent bottom navigation
 - Python and System Design track switching
+- 18 modules and 164 curated cards across both paths
+- Python from variables through OOP, data structures, algorithms, and dynamic programming
+- System Design from requests through data, scaling, distributed systems, reliability, security, and case studies
 - Teaching, worked examples, quizzes, and review cards
 - Progressive hints and misconception-specific feedback
 - Confidence check after each answer
 - XP, levels, streaks, accuracy, activity, and concept mastery
-- Resumable sessions and bookmarked cards
+- Resumable sessions, configurable checkpoints, unlimited continuation, and bookmarked cards
+- Adaptive queues: missed cards return sooner and successful recall increases the interval
 - First-run learning preferences
 - Installable PWA with offline shell support
 - Device-local progress with optional Supabase account sync
@@ -42,7 +46,7 @@ Learn → See → Try → Understand → Review → Stop
 | Web | Next.js, React, TypeScript, CSS |
 | Accounts and sync | Optional Supabase Auth + PostgreSQL with row-level security |
 | Learning API | FastAPI, Pydantic, SQLAlchemy |
-| Content | Version-controlled JSON curricula |
+| Content | Version-controlled JSON foundations and typed course modules |
 | Quality | TypeScript, Pytest, GitHub Actions |
 | Deployment | Vercel |
 
@@ -111,7 +115,8 @@ pytest
 | Method | Route | Purpose |
 | --- | --- | --- |
 | `GET` | `/health` | Service health check |
-| `GET` | `/api/v1/sessions/daily?track_id=python` | Return an ordered Daily 10 without answers |
+| `GET` | `/api/v1/catalog` | List both complete course paths and their modules |
+| `GET` | `/api/v1/sessions/daily?track_id=python` | Return an ordered starter session without answers |
 | `POST` | `/api/v1/attempts` | Grade and persist an answer |
 | `GET` | `/api/v1/progress/{learner_id}` | Aggregate XP, accuracy, and mastery |
 
@@ -119,7 +124,7 @@ pytest
 
 **Teach before testing.** A beginner should never feel that ByteScroll is examining knowledge it did not explain.
 
-**Earn attention; do not trap it.** Sessions are finite, streaks are non-punitive, and the final card explicitly gives the learner permission to leave.
+**Earn attention; do not trap it.** Checkpoints are explicit, streaks are non-punitive, and continuing is always the learner's choice.
 
 **Measure retention, not taps.** Review queues and delayed recall matter more than raw time in the app.
 
@@ -127,14 +132,14 @@ pytest
 
 ## Roadmap
 
-- [x] Teach-before-quiz Daily 10
+- [x] Teach-before-quiz sessions with flexible checkpoints
 - [x] Mobile navigation and responsive learning surface
-- [x] Python and System Design foundations
+- [x] Full Python/DSA and advanced System Design learning paths
 - [x] Progress dashboard, activity tracker, and session resume
+- [x] Adaptive spaced-repetition scheduling and mistake review
 - [x] Installable PWA
 - [x] Optional Supabase authentication and sync foundation
 - [ ] Connect the deployed project to Supabase
-- [ ] Adaptive spaced-repetition scheduling
 - [ ] Safe sandboxed Python exercises
 - [ ] Weekly mini-projects
 - [ ] Interactive system-design builder

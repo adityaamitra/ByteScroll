@@ -28,6 +28,24 @@ class DailySessionOut(BaseModel):
     cards: list[CardOut]
 
 
+class CatalogModuleOut(BaseModel):
+    id: str
+    title: str
+    level: str
+    cards: int
+
+
+class TrackCatalogOut(BaseModel):
+    id: str
+    name: str
+    cards: int
+    modules: list[CatalogModuleOut]
+
+
+class CatalogOut(BaseModel):
+    tracks: list[TrackCatalogOut]
+
+
 class AttemptCreate(BaseModel):
     learner_id: str = Field(default="demo-learner", min_length=1, max_length=100)
     card_id: str

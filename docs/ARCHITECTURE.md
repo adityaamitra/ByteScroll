@@ -28,12 +28,12 @@ Shared state includes:
 
 Each track owns:
 
-- current Daily 10 position;
+- selected module and resumable study session;
 - completed cards;
 - XP, answers, and accuracy;
 - concept-level attempts and confidence;
 - bookmarks; and
-- a review queue.
+- a spaced-review queue with due dates and expanding intervals.
 
 ## Authentication and sync
 
@@ -52,7 +52,7 @@ Conflict-aware merging is a future improvement for learners who modify two devic
 
 ## Content model
 
-Each track contains ten ordered learning steps. A step is one of:
+Each track contains ordered modules. Modules contain teach → example → quiz units, and sessions select from due reviews followed by unseen cards. A step is one of:
 
 - `learn`: concise instruction;
 - `example`: a worked example;
@@ -60,6 +60,8 @@ Each track contains ten ordered learning steps. A step is one of:
 - `review`: a question that combines recent concepts.
 
 Quiz answers, explanations, wrong-option feedback, and hints are all version-controlled. No runtime AI generation is required.
+
+The client creates a 5, 10, or 20-card starting session, persists its cursor, and pauses at the checkpoint. A learner can finish, review mistakes, or append five more cards repeatedly. Module selection is unlocked after 80% of the previous module is complete.
 
 ## PWA behavior
 

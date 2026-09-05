@@ -14,6 +14,7 @@ import {
   finishOnboarding,
   loadProgress,
   saveProgress,
+  selectModule,
   setActiveTab,
   setActiveTrack,
   updateSettings,
@@ -126,6 +127,11 @@ export function LearningFeed() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  function changeModule(trackId: TrackId, moduleId: string) {
+    persist(selectModule(progress, trackId, moduleId));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   async function signInWithGoogle() {
     const client = getCloudClient();
     if (!client) return;
@@ -177,7 +183,7 @@ export function LearningFeed() {
       <div className="app-content">
         {progress.activeTab === "learn" && <LessonView progress={progress} onProgressChange={persist} onTrackChange={changeTrack} />}
         {progress.activeTab === "progress" && <ProgressView progress={progress} />}
-        {progress.activeTab === "tracks" && <TracksView progress={progress} onSelect={changeTrack} />}
+        {progress.activeTab === "tracks" && <TracksView progress={progress} onSelect={changeModule} />}
         {progress.activeTab === "profile" && (
           <ProfileView
             progress={progress}

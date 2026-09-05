@@ -23,7 +23,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
       <section className="onboarding-card">
         <div className="onboarding-brand"><span className="brand-mark">B</span><span>ByteScroll</span></div>
         <span className="overline accent">Set your starting point</span>
-        <h1>Turn your next ten scrolls into a skill.</h1>
+        <h1>Turn your next scrolls into a skill.</h1>
         <p className="onboarding-intro">Pick a track and pace. You can change both whenever you want.</p>
 
         <fieldset className="choice-group">
@@ -45,8 +45,8 @@ export function Onboarding({ onComplete }: OnboardingProps) {
         <fieldset className="choice-group compact">
           <legend>Daily goal</legend>
           <div className="segmented-control goals">
-            {([5, 10, 15] as const).map((minutes) => (
-              <button className={dailyGoal === minutes ? "selected" : ""} onClick={() => setDailyGoal(minutes)} key={minutes}>{minutes} min</button>
+            {([5, 10, 20] as const).map((cards) => (
+              <button className={dailyGoal === cards ? "selected" : ""} onClick={() => setDailyGoal(cards)} key={cards}>{cards} cards</button>
             ))}
           </div>
         </fieldset>

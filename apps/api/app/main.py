@@ -7,10 +7,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .curriculum import CARD_INDEX, TRACK_CARDS, public_card
+from .curriculum import CARD_INDEX, CATALOG, TRACK_CARDS, public_card
 from .database import Base, engine, get_db
 from .models import Attempt
-from .schemas import AttemptCreate, AttemptResult, DailySessionOut, ProgressOut
+from .schemas import AttemptCreate, AttemptResult, CatalogOut, DailySessionOut, ProgressOut
 
 
 @asynccontextmanager
@@ -38,6 +38,11 @@ app.add_middleware(
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/api/v1/catalog", response_model=CatalogOut)
+def course_catalog() -> dict:
+    return CATALOG
 
 
 @app.get("/api/v1/sessions/daily", response_model=DailySessionOut)

@@ -23,6 +23,17 @@ def test_daily_session_does_not_leak_answers() -> None:
     assert response.json()["cards"][0]["kind"] == "learn"
 
 
+def test_catalog_lists_complete_learning_paths() -> None:
+    with TestClient(app) as client:
+        response = client.get("/api/v1/catalog")
+
+    assert response.status_code == 200
+    tracks = response.json()["tracks"]
+    assert {track["id"] for track in tracks} == {"python", "system-design"}
+    assert all(track["cards"] == 82 for track in tracks)
+    assert all(len(track["modules"]) == 9 for track in tracks)
+
+
 def test_attempt_returns_feedback() -> None:
     with TestClient(app) as client:
         response = client.post(

@@ -1,0 +1,36 @@
+{
+  "tracks": [
+    {
+      "id": "python",
+      "name": "Python and algorithms",
+      "cards": 82,
+      "modules": [
+        { "id": "py-foundations", "title": "Python foundations", "level": "Foundations", "cards": 10 },
+        { "id": "py-control-flow", "title": "Loops and functions", "level": "Foundations", "cards": 9 },
+        { "id": "py-collections", "title": "Python collections", "level": "Foundations", "cards": 9 },
+        { "id": "py-intermediate", "title": "Practical Python", "level": "Intermediate", "cards": 9 },
+        { "id": "py-complexity-hashing", "title": "Complexity, arrays, and hashing", "level": "Intermediate", "cards": 9 },
+        { "id": "py-linear-recursion", "title": "Linear structures and recursion", "level": "Intermediate", "cards": 9 },
+        { "id": "py-trees-graphs", "title": "Trees, heaps, and graphs", "level": "Advanced", "cards": 9 },
+        { "id": "py-search-sort", "title": "Search, sort, and greedy thinking", "level": "Advanced", "cards": 9 },
+        { "id": "py-advanced-algorithms", "title": "Backtracking and dynamic programming", "level": "Interview practice", "cards": 9 }
+      ]
+    },
+    {
+      "id": "system-design",
+      "name": "System design",
+      "cards": 82,
+      "modules": [
+        { "id": "sd-foundations", "title": "System design foundations", "level": "Foundations", "cards": 10 },
+        { "id": "sd-web-networking", "title": "Web and networking", "level": "Foundations", "cards": 9 },
+        { "id": "sd-data-storage", "title": "Data and storage", "level": "Intermediate", "cards": 9 },
+        { "id": "sd-scaling", "title": "Scaling and delivery", "level": "Intermediate", "cards": 9 },
+        { "id": "sd-async", "title": "Asynchronous systems", "level": "Intermediate", "cards": 9 },
+        { "id": "sd-distributed", "title": "Distributed systems", "level": "Advanced", "cards": 9 },
+        { "id": "sd-reliability", "title": "Reliability and operations", "level": "Advanced", "cards": 9 },
+        { "id": "sd-security", "title": "Security and abuse control", "level": "Advanced", "cards": 9 },
+        { "id": "sd-case-studies", "title": "Design case studies", "level": "Interview practice", "cards": 9 }
+      ]
+    }
+  ]
+}

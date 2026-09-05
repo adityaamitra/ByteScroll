@@ -62,7 +62,7 @@ export function ProfileView({ progress, user, cloudConfigured, syncStatus, onSet
         <section className="surface-panel preferences-panel">
           <span className="overline">Learning preferences</span>
           <h2>Your daily rhythm</h2>
-          <label><span>Daily goal</span><select value={progress.settings.dailyGoal} onChange={(event) => onSettingsChange({ dailyGoal: Number(event.target.value) as 5 | 10 | 15 })}><option value="5">5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option></select></label>
+          <label><span>Starting checkpoint</span><select value={progress.settings.dailyGoal} onChange={(event) => onSettingsChange({ dailyGoal: Number(event.target.value) as 5 | 10 | 20 })}><option value="5">5 cards</option><option value="10">10 cards</option><option value="20">20 cards</option></select></label>
           <label><span>Starting level</span><select value={progress.settings.experience} onChange={(event) => onSettingsChange({ experience: event.target.value as LearnerSettings["experience"] })}><option value="new">From scratch</option><option value="some">I know a little</option></select></label>
         </section>
 

@@ -12,16 +12,16 @@ The first user is a beginner who wants to learn Python or system design but stru
 
 ## Core promise
 
-> In ten intentional scrolls, learn or reinforce one useful technical idea.
+> Replace the next few passive scrolls with one useful technical idea—and keep going only when you choose.
 
 ## MVP loop
 
 1. The learner opens ByteScroll.
-2. A Daily 10 session is already prepared.
-3. Each card asks for a prediction, diagnosis, or choice.
+2. A session matching the learner's 5, 10, or 20-card goal is already prepared.
+3. Each unit teaches, demonstrates, and then asks for active recall.
 4. The learner receives immediate, concise feedback.
-5. The system updates XP and concept mastery.
-6. After ten cards, the feed ends and summarizes progress.
+5. The system updates XP, mastery, and spaced review.
+6. At the checkpoint, the learner can finish, review mistakes, or continue for five more cards.
 
 ## Product principles
 
@@ -45,7 +45,7 @@ Generated drafts must pass automated checks and human review before entering the
 
 | Metric | What it reveals | Initial target |
 | --- | --- | --- |
-| Daily 10 completion | Is the session appropriately sized? | 60%+ |
+| Checkpoint completion | Is the starting session appropriately sized? | 60%+ |
 | Day-7 return | Does the habit persist past novelty? | 25%+ |
 | Delayed recall | Are learners retaining concepts? | 70%+ |
 | Wrong-to-right conversion | Does review correct misconceptions? | 50%+ |
@@ -53,10 +53,8 @@ Generated drafts must pass automated checks and human review before entering the
 
 Targets are hypotheses to validate, not claims about current performance.
 
-## Explicit non-goals for v1
+## Explicit non-goals
 
-- Replacing a complete Python course
 - Live AI generation of unreviewed lessons
 - Social follower counts or competitive leaderboards
 - A general-purpose code execution environment
-- Simultaneously launching Python and system design curricula

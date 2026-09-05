@@ -1,6 +1,7 @@
-import type { LearningStep, TrackId } from "@/lib/curriculum";
+import { tracks, type LearningStep, type TrackId } from "@/lib/curriculum";
 
 export type AppTab = "learn" | "progress" | "tracks" | "profile";
+export type DailyGoal = 5 | 10 | 20;
 
 export interface ConceptProgress {
   seen: number;
@@ -12,6 +13,17 @@ export interface ConceptProgress {
 export interface ReviewItem {
   stepId: string;
   dueAt: string;
+  intervalDays: number;
+  repetitions: number;
+}
+
+export interface StudySession {
+  stepIds: string[];
+  cursor: number;
+  startedAt: string;
+  date: string;
+  checkpointSize: number;
+  missedStepIds: string[];
 }
 
 export interface TrackProgress {
@@ -19,23 +31,24 @@ export interface TrackProgress {
   totalAnswered: number;
   totalCorrect: number;
   sessionsCompleted: number;
-  currentStep: number;
+  selectedModuleId: string;
   completedStepIds: string[];
   lastSessionDate: string | null;
   concepts: Record<string, ConceptProgress>;
   reviewQueue: ReviewItem[];
   bookmarks: string[];
+  session: StudySession | null;
 }
 
 export interface LearnerSettings {
   onboardingComplete: boolean;
   experience: "new" | "some";
-  dailyGoal: 5 | 10 | 15;
+  dailyGoal: DailyGoal;
   displayName: string;
 }
 
 export interface LearnerProgress {
-  version: 2;
+  version: 3;
   activeTrack: TrackId;
   activeTab: AppTab;
   streak: number;
@@ -46,27 +59,28 @@ export interface LearnerProgress {
   tracks: Record<TrackId, TrackProgress>;
 }
 
-const STORAGE_KEY = "bytescroll-progress-v2";
-const LEGACY_STORAGE_KEY = "bytescroll-progress-v1";
+const STORAGE_KEY = "bytescroll-progress-v3";
+const OLD_STORAGE_KEYS = ["bytescroll-progress-v2", "bytescroll-progress-v1"];
 
-function emptyTrack(): TrackProgress {
+function emptyTrack(trackId: TrackId): TrackProgress {
   return {
     totalXp: 0,
     totalAnswered: 0,
     totalCorrect: 0,
     sessionsCompleted: 0,
-    currentStep: 0,
+    selectedModuleId: tracks[trackId].modules[0].id,
     completedStepIds: [],
     lastSessionDate: null,
     concepts: {},
     reviewQueue: [],
     bookmarks: [],
+    session: null,
   };
 }
 
 export function createEmptyProgress(): LearnerProgress {
   return {
-    version: 2,
+    version: 3,
     activeTrack: "python",
     activeTab: "learn",
     streak: 0,
@@ -80,8 +94,8 @@ export function createEmptyProgress(): LearnerProgress {
       displayName: "",
     },
     tracks: {
-      python: emptyTrack(),
-      "system-design": emptyTrack(),
+      python: emptyTrack("python"),
+      "system-design": emptyTrack("system-design"),
     },
   };
 }
@@ -95,8 +109,13 @@ export function loadProgress(): LearnerProgress {
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (stored) return normalizeProgress(JSON.parse(stored));
 
-    const legacy = window.localStorage.getItem(LEGACY_STORAGE_KEY);
-    if (legacy) return migrateLegacyProgress(JSON.parse(legacy));
+    for (const key of OLD_STORAGE_KEYS) {
+      const previous = window.localStorage.getItem(key);
+      if (previous) {
+        const parsed = JSON.parse(previous) as Record<string, unknown>;
+        return key.endsWith("v1") ? migrateLegacyProgress(parsed) : normalizeProgress(parsed);
+      }
+    }
   } catch {
     return createEmptyProgress();
   }
@@ -110,18 +129,55 @@ export function saveProgress(progress: LearnerProgress): void {
   }
 }
 
-export function normalizeProgress(value: Partial<LearnerProgress>): LearnerProgress {
+export function normalizeProgress(value: Partial<LearnerProgress> & Record<string, unknown>): LearnerProgress {
   const empty = createEmptyProgress();
+  const rawSettings = value.settings as Partial<LearnerSettings> | undefined;
+  const legacyGoal = Number(rawSettings?.dailyGoal ?? empty.settings.dailyGoal);
+  const dailyGoal: DailyGoal = legacyGoal === 5 || legacyGoal === 20 ? legacyGoal : 10;
+  const rawTracks = value.tracks as Partial<Record<TrackId, Partial<TrackProgress>>> | undefined;
+
   return {
     ...empty,
     ...value,
-    version: 2,
-    settings: { ...empty.settings, ...value.settings },
+    version: 3,
+    settings: { ...empty.settings, ...rawSettings, dailyGoal },
     tracks: {
-      python: { ...empty.tracks.python, ...value.tracks?.python },
-      "system-design": { ...empty.tracks["system-design"], ...value.tracks?.["system-design"] },
+      python: normalizeTrack("python", rawTracks?.python),
+      "system-design": normalizeTrack("system-design", rawTracks?.["system-design"]),
     },
   };
+}
+
+function normalizeTrack(trackId: TrackId, value?: Partial<TrackProgress>): TrackProgress {
+  const empty = emptyTrack(trackId);
+  const validModule = tracks[trackId].modules.some((module) => module.id === value?.selectedModuleId);
+  return {
+    ...empty,
+    ...value,
+    selectedModuleId: validModule ? value?.selectedModuleId as string : empty.selectedModuleId,
+    completedStepIds: Array.isArray(value?.completedStepIds) ? value.completedStepIds : [],
+    bookmarks: Array.isArray(value?.bookmarks) ? value.bookmarks : [],
+    concepts: value?.concepts ?? {},
+    reviewQueue: Array.isArray(value?.reviewQueue)
+      ? value.reviewQueue.map((item) => ({
+          ...item,
+          intervalDays: Number(item.intervalDays ?? 1),
+          repetitions: Number(item.repetitions ?? 0),
+        }))
+      : [],
+    session: isValidSession(value?.session) ? value.session : null,
+  };
+}
+
+function isValidSession(value: StudySession | null | undefined): value is StudySession {
+  return Boolean(
+    value &&
+      Array.isArray(value.stepIds) &&
+      typeof value.cursor === "number" &&
+      typeof value.date === "string" &&
+      typeof value.checkpointSize === "number" &&
+      Array.isArray(value.missedStepIds),
+  );
 }
 
 export function setActiveTab(progress: LearnerProgress, tab: AppTab): LearnerProgress {
@@ -130,6 +186,40 @@ export function setActiveTab(progress: LearnerProgress, tab: AppTab): LearnerPro
 
 export function setActiveTrack(progress: LearnerProgress, trackId: TrackId): LearnerProgress {
   return { ...progress, activeTrack: trackId, activeTab: "learn" };
+}
+
+export function selectModule(
+  progress: LearnerProgress,
+  trackId: TrackId,
+  moduleId: string,
+): LearnerProgress {
+  return {
+    ...progress,
+    activeTrack: trackId,
+    activeTab: "learn",
+    tracks: {
+      ...progress.tracks,
+      [trackId]: {
+        ...progress.tracks[trackId],
+        selectedModuleId: moduleId,
+        session: null,
+      },
+    },
+  };
+}
+
+export function setStudySession(
+  progress: LearnerProgress,
+  trackId: TrackId,
+  session: StudySession,
+): LearnerProgress {
+  return {
+    ...progress,
+    tracks: {
+      ...progress.tracks,
+      [trackId]: { ...progress.tracks[trackId], session },
+    },
+  };
 }
 
 export function finishOnboarding(
@@ -162,8 +252,16 @@ export function completeLearningStep(
     correct: 0,
     confidenceTotal: 0,
   };
-  const isQuestion = typeof isCorrect === "boolean";
-  const reviewQueue = updateReviewQueue(track.reviewQueue, step.id, isCorrect);
+  const answered = typeof isCorrect === "boolean";
+  const session = track.session
+    ? {
+        ...track.session,
+        cursor: Math.min(track.session.cursor + 1, track.session.stepIds.length),
+        missedStepIds: isCorrect === false && !track.session.missedStepIds.includes(step.id)
+          ? [...track.session.missedStepIds, step.id]
+          : track.session.missedStepIds,
+      }
+    : null;
 
   return {
     ...progress,
@@ -172,22 +270,20 @@ export function completeLearningStep(
       [trackId]: {
         ...track,
         totalXp: track.totalXp + (alreadyCompleted ? 0 : step.xp),
-        totalAnswered: track.totalAnswered + (isQuestion ? 1 : 0),
+        totalAnswered: track.totalAnswered + (answered ? 1 : 0),
         totalCorrect: track.totalCorrect + (isCorrect ? 1 : 0),
-        currentStep: Math.min(track.currentStep + 1, 10),
-        completedStepIds: alreadyCompleted
-          ? track.completedStepIds
-          : [...track.completedStepIds, step.id],
+        completedStepIds: alreadyCompleted ? track.completedStepIds : [...track.completedStepIds, step.id],
         concepts: {
           ...track.concepts,
           [step.concept]: {
             ...concept,
             seen: concept.seen + (alreadyCompleted ? 0 : 1),
-            attempts: concept.attempts + (isQuestion ? 1 : 0),
+            attempts: concept.attempts + (answered ? 1 : 0),
             correct: concept.correct + (isCorrect ? 1 : 0),
           },
         },
-        reviewQueue,
+        reviewQueue: updateReviewQueue(track.reviewQueue, step.id, isCorrect),
+        session,
       },
     },
   };
@@ -211,10 +307,7 @@ export function recordConfidence(
         ...track,
         concepts: {
           ...track.concepts,
-          [conceptName]: {
-            ...concept,
-            confidenceTotal: concept.confidenceTotal + confidence,
-          },
+          [conceptName]: { ...concept, confidenceTotal: concept.confidenceTotal + confidence },
         },
       },
     },
@@ -248,21 +341,7 @@ export function completeSession(progress: LearnerProgress, trackId: TrackId): Le
   };
 }
 
-export function restartTrackSession(progress: LearnerProgress, trackId: TrackId): LearnerProgress {
-  return {
-    ...progress,
-    tracks: {
-      ...progress.tracks,
-      [trackId]: { ...progress.tracks[trackId], currentStep: 0 },
-    },
-  };
-}
-
-export function toggleBookmark(
-  progress: LearnerProgress,
-  trackId: TrackId,
-  stepId: string,
-): LearnerProgress {
+export function toggleBookmark(progress: LearnerProgress, trackId: TrackId, stepId: string): LearnerProgress {
   const track = progress.tracks[trackId];
   const bookmarks = track.bookmarks.includes(stepId)
     ? track.bookmarks.filter((id) => id !== stepId)
@@ -270,10 +349,7 @@ export function toggleBookmark(
 
   return {
     ...progress,
-    tracks: {
-      ...progress.tracks,
-      [trackId]: { ...track, bookmarks },
-    },
+    tracks: { ...progress.tracks, [trackId]: { ...track, bookmarks } },
   };
 }
 
@@ -284,31 +360,33 @@ export function updateSettings(
   return { ...progress, settings: { ...progress.settings, ...settings } };
 }
 
-function updateReviewQueue(
-  queue: ReviewItem[],
-  stepId: string,
-  isCorrect?: boolean,
-): ReviewItem[] {
+function updateReviewQueue(queue: ReviewItem[], stepId: string, isCorrect?: boolean): ReviewItem[] {
   if (typeof isCorrect !== "boolean") return queue;
+  const previous = queue.find((item) => item.stepId === stepId);
   const withoutCurrent = queue.filter((item) => item.stepId !== stepId);
-  if (isCorrect) return withoutCurrent;
+  const intervalDays = isCorrect
+    ? previous ? Math.min(30, Math.max(3, previous.intervalDays * 2)) : 3
+    : 1;
+  const repetitions = isCorrect ? (previous?.repetitions ?? 0) + 1 : 0;
 
-  const due = offsetDate(new Date(), 1);
-  return [...withoutCurrent, { stepId, dueAt: dateKey(due) }];
+  return [
+    ...withoutCurrent,
+    { stepId, dueAt: dateKey(offsetDate(new Date(), intervalDays)), intervalDays, repetitions },
+  ];
 }
 
 function migrateLegacyProgress(legacy: Record<string, unknown>): LearnerProgress {
   const progress = createEmptyProgress();
   const concepts = (legacy.concepts ?? {}) as Record<string, { attempts?: number; correct?: number }>;
-
+  const lastSessionDate = (legacy.lastSessionDate as string | null) ?? null;
   progress.settings.onboardingComplete = true;
   progress.streak = Number(legacy.streak ?? 0);
-  progress.lastLearningDate = (legacy.lastSessionDate as string | null) ?? null;
+  progress.lastLearningDate = lastSessionDate;
   progress.tracks.python.totalXp = Number(legacy.totalXp ?? 0);
   progress.tracks.python.totalAnswered = Number(legacy.totalAnswered ?? 0);
   progress.tracks.python.totalCorrect = Number(legacy.totalCorrect ?? 0);
   progress.tracks.python.sessionsCompleted = Number(legacy.sessionsCompleted ?? 0);
-  progress.tracks.python.lastSessionDate = (legacy.lastSessionDate as string | null) ?? null;
+  progress.tracks.python.lastSessionDate = lastSessionDate;
   progress.tracks.python.concepts = Object.fromEntries(
     Object.entries(concepts).map(([name, value]) => [
       name,
@@ -320,18 +398,17 @@ function migrateLegacyProgress(legacy: Record<string, unknown>): LearnerProgress
       },
     ]),
   );
-
   return progress;
+}
+
+export function dateKey(date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+    date.getDate(),
+  ).padStart(2, "0")}`;
 }
 
 function offsetDate(date: Date, days: number): Date {
   const copy = new Date(date);
   copy.setDate(copy.getDate() + days);
   return copy;
-}
-
-function dateKey(date: Date): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-    date.getDate(),
-  ).padStart(2, "0")}`;
 }

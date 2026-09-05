@@ -3,7 +3,8 @@
 ## Phase 1 — Learning loop and mobile foundation (complete)
 
 - Teach → See → Try → Understand → Review sequence
-- Python and System Design Daily 10 curricula
+- Flexible 5, 10, or 20-card checkpoints with optional five-card continuation
+- Complete Python/DSA and advanced System Design module paths
 - Mobile bottom navigation and phone-safe layouts
 - Track-specific mastery, bookmarks, confidence, and review queues
 - Resumable local sessions
@@ -26,12 +27,13 @@ Acceptance criteria:
 - Guest progress becomes the initial cloud record on first sign-in.
 - Signing out leaves a usable local learning experience.
 
-## Phase 3 — Adaptive review
+## Phase 3 — Adaptive review (complete)
 
 - Schedule incorrect cards for near-term review.
-- Increase intervals after confident, correct recall.
+- Increase intervals after correct recall.
 - Balance new lessons with due review cards.
-- Base mastery on delayed recall rather than lifetime accuracy alone.
+- Offer immediate mistake review at each checkpoint.
+- [ ] Base mastery on delayed recall rather than lifetime accuracy alone.
 - Add deterministic scheduler tests.
 
 ## Phase 4 — Curriculum tooling
