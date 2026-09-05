@@ -2,63 +2,63 @@
 
 > Trade scrolling for skill.
 
-ByteScroll is a mobile-first learning feed that turns the reflex to consume short-form content into a focused Python practice habit. Each card takes under 90 seconds, asks the learner to make a decision before seeing the answer, and contributes to visible concept mastery.
+[**Try the live app →**](https://bytescroll.vercel.app)
 
-This repository contains a working **Daily 10** prototype, a shared beginner Python curriculum, and a FastAPI foundation for server-side sessions and progress tracking.
+ByteScroll is a mobile-first learning feed that replaces passive morning scrolling with short, structured Python and system design lessons. Every Daily 10 session teaches first, shows a concrete example, asks the learner to try, explains the result, and ends on purpose.
 
-## Why this project exists
+## Why ByteScroll
 
-Infinite feeds are exceptionally good at removing stopping cues. ByteScroll borrows their low-friction interaction model but changes the incentives:
+Infinite feeds remove stopping cues. Traditional learning tools often add too much activation energy. ByteScroll borrows the ease of short-form content while changing the loop:
 
-- every card requires active recall;
-- explanations appear only after an attempt;
-- incorrect concepts can return through spaced repetition;
-- progress is measured by mastery rather than time spent; and
-- each session has a deliberate end.
+```text
+Learn → See → Try → Understand → Review → Stop
+```
 
-## Current prototype
+- Lessons take seconds to begin.
+- Explanations come before fair, focused questions.
+- Wrong answers generate targeted feedback and a review item.
+- Python and system design maintain independent mastery paths.
+- The feed ends after ten cards.
 
-- Ten interactive Python foundation cards
-- Concept, output-prediction, debugging, and quiz formats
-- Immediate explanations and XP feedback
-- Local progress, accuracy, concept mastery, levels, and streaks
-- Responsive desktop and mobile layouts
-- Shared JSON curriculum consumed by the web and API layers
-- FastAPI endpoints for daily sessions, attempts, and learner progress
-- SQLAlchemy persistence with SQLite locally and PostgreSQL support through `DATABASE_URL`
-- Tests and GitHub Actions checks
+## Current experience
 
-## Product preview
-
-The main experience is intentionally a finite feed:
-
-1. See one focused concept or code sample.
-2. Commit to an answer.
-3. Read a short explanation.
-4. Earn progress and move to the next card.
-5. Stop after the Daily 10 completion screen.
+- Mobile-first Daily 10 interface with persistent bottom navigation
+- Python and System Design track switching
+- Teaching, worked examples, quizzes, and review cards
+- Progressive hints and misconception-specific feedback
+- Confidence check after each answer
+- XP, levels, streaks, accuracy, activity, and concept mastery
+- Resumable sessions and bookmarked cards
+- First-run learning preferences
+- Installable PWA with offline shell support
+- Device-local progress with optional Supabase account sync
+- FastAPI endpoints for server-side sessions, grading, and progress aggregation
+- No generative AI dependency or AI usage cost
 
 ## Tech stack
 
 | Layer | Technology |
 | --- | --- |
 | Web | Next.js, React, TypeScript, CSS |
-| API | FastAPI, Pydantic, SQLAlchemy |
-| Data | SQLite for zero-config development; PostgreSQL-ready |
-| Content | Version-controlled JSON curriculum |
+| Accounts and sync | Optional Supabase Auth + PostgreSQL with row-level security |
+| Learning API | FastAPI, Pydantic, SQLAlchemy |
+| Content | Version-controlled JSON curricula |
 | Quality | TypeScript, Pytest, GitHub Actions |
+| Deployment | Vercel |
 
 ## Repository structure
 
 ```text
 bytescroll/
 ├── apps/
-│   ├── web/                 # Interactive Next.js prototype
-│   └── api/                 # FastAPI service and tests
-├── content/python/          # Shared, reviewable learning cards
-├── docs/                    # Product, architecture, and roadmap
-├── .github/workflows/       # Continuous integration
-└── docker-compose.yml       # Optional local PostgreSQL
+│   ├── web/                         # Next.js PWA
+│   └── api/                         # FastAPI service and tests
+├── content/
+│   ├── python/learning-path.json
+│   └── system-design/foundations.json
+├── supabase/migrations/             # Secure progress-sync schema
+├── docs/                            # Product and architecture notes
+└── .github/workflows/               # Continuous integration
 ```
 
 ## Run the web app
@@ -70,7 +70,23 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Accounts are optional; progress works locally without environment variables.
+
+## Enable login and cross-device sync
+
+ByteScroll uses guest mode until Supabase is configured.
+
+1. Create a Supabase project.
+2. Run `supabase/migrations/001_learner_progress.sql` in its SQL editor.
+3. Configure email magic links and, optionally, Google OAuth in Supabase Auth.
+4. Add local and production URLs to the allowed redirect URLs.
+5. Copy the environment template and add the project values:
+
+```bash
+cp apps/web/.env.example apps/web/.env.local
+```
+
+Only the public project URL and anon key belong in `NEXT_PUBLIC_*` variables. Row-level security restricts every progress record to its authenticated owner.
 
 ## Run the API
 
@@ -78,67 +94,53 @@ Requirements: Python 3.11 or newer.
 
 ```bash
 cd apps/api
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements-dev.txt
 uvicorn app.main:app --reload
 ```
 
-The interactive API documentation is available at [http://localhost:8000/docs](http://localhost:8000/docs).
-
-Run the API tests with:
+Interactive documentation is available at [http://localhost:8000/docs](http://localhost:8000/docs).
 
 ```bash
-cd apps/api
 pytest
 ```
-
-### Optional PostgreSQL database
-
-```bash
-docker compose up -d postgres
-export DATABASE_URL=postgresql+psycopg://bytescroll:bytescroll@localhost:5432/bytescroll
-```
-
-SQLite remains the default so contributors can run the API without Docker.
 
 ## API surface
 
 | Method | Route | Purpose |
 | --- | --- | --- |
 | `GET` | `/health` | Service health check |
-| `GET` | `/api/v1/sessions/daily` | Return a deterministic daily set without answers |
-| `POST` | `/api/v1/attempts` | Grade and persist an answer, then return feedback |
-| `GET` | `/api/v1/progress/{learner_id}` | Aggregate XP, accuracy, and concept mastery |
+| `GET` | `/api/v1/sessions/daily?track_id=python` | Return an ordered Daily 10 without answers |
+| `POST` | `/api/v1/attempts` | Grade and persist an answer |
+| `GET` | `/api/v1/progress/{learner_id}` | Aggregate XP, accuracy, and mastery |
 
-## Design decisions
+## Product principles
 
-**A finite feed over infinite scroll.** ByteScroll provides the familiar feeling of “one more card” but restores a natural stopping point.
+**Teach before testing.** A beginner should never feel that ByteScroll is examining knowledge it did not explain.
 
-**Retrieval before explanation.** Learners must predict, debug, or choose before feedback appears. Recognition alone is not treated as mastery.
+**Earn attention; do not trap it.** Sessions are finite, streaks are non-punitive, and the final card explicitly gives the learner permission to leave.
 
-**Content is version controlled.** AI can help draft future cards, but the canonical curriculum is reviewable data—not unverified text generated at request time.
+**Measure retention, not taps.** Review queues and delayed recall matter more than raw time in the app.
 
-**Answers stay server-side in the API flow.** Daily-session responses omit the correct option and explanation. The current frontend also supports a zero-config local demo while the authenticated API integration is built.
+**Keep content reviewable.** The current tutor experience uses curated explanations, hints, and targeted feedback. Generative AI is an optional future adapter, not a requirement.
 
 ## Roadmap
 
-- [x] Daily 10 interactive prototype
-- [x] Beginner Python card schema and starter curriculum
-- [x] API grading and attempt persistence
-- [ ] Authentication and cross-device sync
-- [ ] SM-2-style spaced repetition queue
-- [ ] Onboarding assessment and adaptive difficulty
-- [ ] Safe, sandboxed code execution
-- [ ] Curriculum authoring and review tools
-- [ ] System design learning track
-- [ ] Learning-outcome analytics and experiments
+- [x] Teach-before-quiz Daily 10
+- [x] Mobile navigation and responsive learning surface
+- [x] Python and System Design foundations
+- [x] Progress dashboard, activity tracker, and session resume
+- [x] Installable PWA
+- [x] Optional Supabase authentication and sync foundation
+- [ ] Connect the deployed project to Supabase
+- [ ] Adaptive spaced-repetition scheduling
+- [ ] Safe sandboxed Python exercises
+- [ ] Weekly mini-projects
+- [ ] Interactive system-design builder
+- [ ] Optional provider-based AI tutor
 
-See [docs/ROADMAP.md](docs/ROADMAP.md) for acceptance criteria and sequencing.
-
-## Contributing
-
-Early contributions are welcome, particularly new card formats, accessibility improvements, and carefully reviewed beginner Python content. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+See [docs/ROADMAP.md](docs/ROADMAP.md) for acceptance criteria.
 
 ## License
 

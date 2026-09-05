@@ -1,71 +1,74 @@
 # Architecture
 
-## Current shape
+## Product flow
 
 ```mermaid
 flowchart TD
-    C["Versioned curriculum"] --> W["Next.js learning feed"]
-    C --> A["FastAPI session service"]
-    W --> L["Browser progress"]
-    A --> D["SQLite or PostgreSQL"]
+    C["Versioned curricula"] --> W["Next.js PWA"]
+    W --> L["Guest progress"]
+    W --> S["Supabase sync"]
+    C --> A["FastAPI grading"]
+    A --> D["SQL database"]
 ```
 
-The frontend is a zero-config vertical slice and records prototype progress in `localStorage`. The API independently demonstrates the intended server-side boundary: sessions omit answers, attempts are graded on the server, and progress is derived from stored events.
+The deployed PWA works without an account. Guest progress is stored on the device. When Supabase is configured and a learner signs in, the same progress document is synchronized to a row protected by PostgreSQL row-level security.
 
-## Intended authenticated flow
+The FastAPI service is the intended long-term boundary for curriculum selection and trusted grading. The static client currently remains independently deployable while that service is hosted.
 
-```mermaid
-sequenceDiagram
-    participant U as Learner
-    participant W as Web app
-    participant A as API
-    participant D as Database
-    U->>W: Open Daily 10
-    W->>A: Request daily session
-    A->>D: Read mastery and review queue
-    A-->>W: Cards without answers
-    U->>W: Choose an option
-    W->>A: Submit attempt
-    A->>D: Store attempt and schedule review
-    A-->>W: Feedback and XP
-```
+## Learning state
 
-## Domain model
+Progress is versioned and divided into shared and track-specific state.
 
-The current persistence layer stores attempts as immutable learning events. This makes aggregate progress reproducible and leaves room for changing the mastery algorithm later.
+Shared state includes:
 
-An attempt contains:
+- overall streak;
+- learning-day history;
+- active tab and track; and
+- onboarding preferences.
 
-- learner identity;
-- card and concept identity;
-- selected option;
-- correctness and XP awarded; and
-- timestamp.
+Each track owns:
 
-Future tables should include learners, sessions, review scheduling, curriculum versions, and experiment assignments.
+- current Daily 10 position;
+- completed cards;
+- XP, answers, and accuracy;
+- concept-level attempts and confidence;
+- bookmarks; and
+- a review queue.
 
-## Content boundary
+## Authentication and sync
 
-`content/python/foundations.json` is the canonical source in the prototype. Both applications consume it. Public session responses deliberately remove `correct_option_id` and `explanation`.
+The client uses Supabase Auth only when public project configuration is present. Google OAuth and email magic links are supported. ByteScroll never handles or stores passwords.
 
-Before the curriculum grows, add:
+The `learner_progress` table uses the authenticated user ID as its primary key. Select, insert, and update policies require `auth.uid() = user_id`. No service-role credential is sent to the browser.
 
-- JSON Schema validation;
-- duplicate-ID detection;
-- executable verification for output-prediction cards;
-- reading-level and accessibility checks; and
-- reviewer ownership and curriculum versioning.
+On first sign-in:
 
-## Security notes
+1. ByteScroll reads the user’s cloud progress.
+2. If a record exists, it replaces device state.
+3. Otherwise, current guest progress becomes the initial cloud record.
+4. Later changes are debounced and upserted.
 
-The project does not execute learner-supplied Python. Adding execution requires isolation, strict resource and network limits, ephemeral filesystems, and abuse controls. Never pass user code to `exec`, `eval`, `subprocess`, or the application host directly.
+Conflict-aware merging is a future improvement for learners who modify two devices while both are offline.
 
-Authentication should replace free-form learner IDs before any multi-user deployment. CORS origins must also move from local defaults to environment configuration.
+## Content model
 
-## Scaling path
+Each track contains ten ordered learning steps. A step is one of:
 
-1. Keep lesson content cached and serve session cards through the API.
-2. Store attempts as append-only events in PostgreSQL.
-3. Precompute a small review queue per learner instead of ranking the full curriculum on every request.
-4. Add a worker for review scheduling and analytics events.
-5. Introduce Redis only after session or ranking latency demonstrates a need.
+- `learn`: concise instruction;
+- `example`: a worked example;
+- `quiz`: active recall with targeted feedback; or
+- `review`: a question that combines recent concepts.
+
+Quiz answers, explanations, wrong-option feedback, and hints are all version-controlled. No runtime AI generation is required.
+
+## PWA behavior
+
+The web manifest provides standalone display metadata and maskable icons. A small network-first service worker caches the application shell and previously loaded same-origin assets. The responsive interface reserves safe-area space for phone navigation and prevents page-level horizontal overflow while allowing code blocks to scroll internally.
+
+## Security boundaries
+
+- Learner-supplied Python is not executed.
+- Authenticated cloud records are protected with row-level security.
+- Only public Supabase configuration is exposed to the web client.
+- Server-side grading responses omit answers from session payloads.
+- Future code execution must use an isolated, resource-limited service—not the application host.

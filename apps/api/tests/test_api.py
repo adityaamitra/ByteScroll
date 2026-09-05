@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from app.curriculum import CARDS
+from app.curriculum import CARDS, TRACK_CARDS
 from app.main import app
 
 
@@ -20,6 +20,7 @@ def test_daily_session_does_not_leak_answers() -> None:
     assert len(response.json()["cards"]) == 3
     assert all("correct_option_id" not in card for card in response.json()["cards"])
     assert all("explanation" not in card for card in response.json()["cards"])
+    assert response.json()["cards"][0]["kind"] == "learn"
 
 
 def test_attempt_returns_feedback() -> None:
@@ -28,7 +29,7 @@ def test_attempt_returns_feedback() -> None:
             "/api/v1/attempts",
             json={
                 "learner_id": "test-learner",
-                "card_id": "py-var-001",
+                "card_id": "py-quiz-variables",
                 "selected_option_id": "b",
             },
         )
@@ -42,7 +43,7 @@ def test_curriculum_ids_and_answers_are_valid() -> None:
     card_ids = [card["id"] for card in CARDS]
 
     assert len(card_ids) == len(set(card_ids))
-    assert all(
-        card["correct_option_id"] in {option["id"] for option in card["options"]}
-        for card in CARDS
-    )
+    assert all(len(cards) == 10 for cards in TRACK_CARDS.values())
+    questions = [card for card in CARDS if card["kind"] in {"quiz", "review"}]
+    assert all(card["correct_option_id"] in {option["id"] for option in card["options"]} for card in questions)
+    assert all(card.get("wrong_feedback") for card in questions)

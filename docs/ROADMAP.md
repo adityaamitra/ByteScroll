@@ -1,60 +1,53 @@
 # Roadmap
 
-## Phase 0 — Product prototype (complete)
+## Phase 1 — Learning loop and mobile foundation (complete)
 
-- Mobile-first Daily 10 interface
-- Ten reviewed Python foundation cards
-- Four active-learning card formats
-- Local XP, accuracy, mastery, and streak tracking
-- Completion screen and finite session boundary
-- Server-side grading API foundation
+- Teach → See → Try → Understand → Review sequence
+- Python and System Design Daily 10 curricula
+- Mobile bottom navigation and phone-safe layouts
+- Track-specific mastery, bookmarks, confidence, and review queues
+- Resumable local sessions
+- Installable PWA metadata and offline shell
 
-## Phase 1 — Real accounts and synced progress
+## Phase 2 — Activate accounts and sync
+
+The application integration and database migration are ready. Remaining deployment work:
+
+- create the Supabase project;
+- apply the included migration;
+- configure email and Google providers;
+- add production redirect URLs; and
+- set the two public environment variables in Vercel.
 
 Acceptance criteria:
 
 - A learner can sign in and resume on another device.
-- The frontend receives cards without answer data.
-- Every submitted attempt is idempotently persisted.
-- A completed session is counted once per learner and date.
-- Local prototype progress can be imported or intentionally discarded.
+- Every learner can read and update only their own progress.
+- Guest progress becomes the initial cloud record on first sign-in.
+- Signing out leaves a usable local learning experience.
 
-## Phase 2 — Spaced repetition
+## Phase 3 — Adaptive review
 
-Acceptance criteria:
+- Schedule incorrect cards for near-term review.
+- Increase intervals after confident, correct recall.
+- Balance new lessons with due review cards.
+- Base mastery on delayed recall rather than lifetime accuracy alone.
+- Add deterministic scheduler tests.
 
-- Incorrect cards receive a near-term review date.
-- Correct cards return at increasing intervals.
-- Daily sessions balance review cards and new material.
-- The scheduler is covered by deterministic unit tests.
-- Mastery is based on delayed recall, not lifetime accuracy alone.
+## Phase 4 — Curriculum tooling
 
-## Phase 3 — Curriculum tooling
+- Validate schema and duplicate IDs automatically.
+- Execute and verify output-prediction examples in isolation.
+- Record objective, difficulty, owner, and review status per card.
+- Preview proposed cards before merging.
 
-Acceptance criteria:
+## Phase 5 — Practice surfaces
 
-- Contributors can validate all content locally.
-- Output-prediction examples are checked in an isolated test process.
-- Every card has an owner, learning objective, difficulty, and review status.
-- A preview route renders a proposed card before merging.
+- Safe, isolated Python exercises with resource limits
+- Weekly mini-projects
+- Interactive system-design component builder
+- Scenario cards that introduce tradeoffs incrementally
 
-## Phase 4 — Safe coding exercises
+## Optional AI tutor
 
-Acceptance criteria:
-
-- Learner code runs outside the web and API hosts.
-- CPU, memory, wall-time, filesystem, and network access are restricted.
-- Test output is normalized into beginner-friendly feedback.
-- Abuse limits and observability exist before public release.
-
-## Phase 5 — System design track
-
-Introduce scenario cards only after the Python habit loop is validated. System design cards should focus on tradeoffs rather than trivia and build diagrams incrementally from concrete requirements.
-
-Examples:
-
-- choose the first bottleneck to investigate;
-- compare cache placement options;
-- estimate storage or request volume;
-- identify a failure mode; and
-- extend a simple architecture under a new constraint.
+Keep generative tutoring behind a provider interface. The core product must remain fully useful without an API key or model expense. A future provider may add alternate explanations or Socratic hints, but canonical answers stay curated and reviewable.

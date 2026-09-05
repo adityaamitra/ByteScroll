@@ -1,0 +1,142 @@
+[
+  {
+    "id": "sd-learn-client-server",
+    "kind": "learn",
+    "concept": "Client and server",
+    "title": "Most systems begin with a conversation",
+    "body": "A client asks for something and a server responds. Your browser is a client; the computer serving a website is the server.",
+    "visual": "Client  →  Request  →  Server\nClient  ←  Response ←  Server",
+    "takeaway": "The client initiates; the server listens and responds.",
+    "xp": 5
+  },
+  {
+    "id": "sd-see-client-server",
+    "kind": "example",
+    "concept": "Client and server",
+    "title": "Opening a page is a request flow",
+    "body": "When you open ByteScroll, the browser requests the page. Vercel’s server finds the built files and returns HTML, CSS, and JavaScript.",
+    "visual": "Phone → bytescroll.vercel.app → Page files → Phone",
+    "takeaway": "A simple request can trigger several pieces of work behind one URL.",
+    "xp": 5
+  },
+  {
+    "id": "sd-quiz-client-server",
+    "kind": "quiz",
+    "concept": "Client and server",
+    "title": "Your turn: identify the client",
+    "body": "You open a weather app and it requests today’s forecast from an API. What is acting as the client?",
+    "options": [
+      { "id": "a", "label": "The weather app" },
+      { "id": "b", "label": "The API server" },
+      { "id": "c", "label": "The forecast database only" }
+    ],
+    "correct_option_id": "a",
+    "explanation": "The weather app initiates the request, so it is the client. The API receives the request and responds as the server.",
+    "wrong_feedback": {
+      "b": "The API is listening and responding, which is the server role.",
+      "c": "The database may supply data behind the API, but it did not initiate the request."
+    },
+    "hint": "Which component starts the conversation?",
+    "xp": 15
+  },
+  {
+    "id": "sd-learn-performance",
+    "kind": "learn",
+    "concept": "Performance",
+    "title": "Fast can mean two different things",
+    "body": "Latency is how long one request takes. Throughput is how many requests a system handles during a period of time.",
+    "visual": "Latency: one request → 120 ms\nThroughput: 1,000 requests → one second",
+    "takeaway": "Latency measures waiting; throughput measures volume.",
+    "xp": 5
+  },
+  {
+    "id": "sd-see-performance",
+    "kind": "example",
+    "concept": "Performance",
+    "title": "A coffee shop explains performance",
+    "body": "The wait for one coffee is latency. The number of coffees the shop makes per hour is throughput. Adding another barista may improve throughput without making one coffee much faster.",
+    "visual": "1 coffee / 4 min = latency\n90 coffees / hour = throughput",
+    "takeaway": "A system can have low latency but still run out of total capacity.",
+    "xp": 5
+  },
+  {
+    "id": "sd-quiz-performance",
+    "kind": "quiz",
+    "concept": "Performance",
+    "title": "Your turn: name the measurement",
+    "body": "A dashboard reports that the API handled 5,000 requests in one second. What is it measuring?",
+    "options": [
+      { "id": "a", "label": "Latency" },
+      { "id": "b", "label": "Throughput" },
+      { "id": "c", "label": "Availability" }
+    ],
+    "correct_option_id": "b",
+    "explanation": "Requests per second measures the volume handled over time, which is throughput.",
+    "wrong_feedback": {
+      "a": "Latency would describe how long an individual request took.",
+      "c": "Availability describes whether the system can be reached, not its request volume."
+    },
+    "hint": "Look for a quantity of work divided by time.",
+    "xp": 15
+  },
+  {
+    "id": "sd-learn-cache",
+    "kind": "learn",
+    "concept": "Caching",
+    "title": "Remember expensive answers",
+    "body": "A cache keeps frequently needed data in a faster location. Future requests can reuse that data instead of repeating slower database or network work.",
+    "visual": "Request → Cache hit → Fast response\n        ↘ Cache miss → Database",
+    "takeaway": "Caching trades some freshness and complexity for speed and reduced load.",
+    "xp": 5
+  },
+  {
+    "id": "sd-see-cache",
+    "kind": "example",
+    "concept": "Caching",
+    "title": "Popular profiles are good cache candidates",
+    "body": "If thousands of people view the same public profile, the service can cache it briefly instead of querying the database for every viewer.",
+    "visual": "Viewers → Profile cache → Database on a miss",
+    "takeaway": "Repeated reads with acceptable staleness are strong caching candidates.",
+    "xp": 5
+  },
+  {
+    "id": "sd-quiz-cache",
+    "kind": "quiz",
+    "concept": "Caching",
+    "title": "Your turn: choose what to cache",
+    "body": "Which data is the safest initial cache candidate?",
+    "options": [
+      { "id": "a", "label": "A public article read thousands of times" },
+      { "id": "b", "label": "A bank balance during a transfer" },
+      { "id": "c", "label": "A one-time password" }
+    ],
+    "correct_option_id": "a",
+    "explanation": "A popular public article is read often and usually tolerates brief staleness. The other options are sensitive to freshness or security.",
+    "wrong_feedback": {
+      "b": "A changing bank balance needs strong freshness guarantees during a transfer.",
+      "c": "One-time passwords are sensitive, short-lived security data—not an initial caching target."
+    },
+    "hint": "Prefer repeated reads where a slightly old value would cause little harm.",
+    "xp": 15
+  },
+  {
+    "id": "sd-review-foundations",
+    "kind": "review",
+    "concept": "Caching",
+    "title": "Quick review: diagnose the slow read",
+    "body": "A product page changes once per day, receives heavy traffic, and repeatedly reads the same database row. What should you try first?",
+    "options": [
+      { "id": "a", "label": "Add a short-lived cache" },
+      { "id": "b", "label": "Create a new database for every request" },
+      { "id": "c", "label": "Make the page refresh every second" }
+    ],
+    "correct_option_id": "a",
+    "explanation": "This is a read-heavy, mostly stable workload. A cache can reduce repeated database work while a sensible expiry keeps the page fresh.",
+    "wrong_feedback": {
+      "b": "More databases do not remove the repeated identical read and add major complexity.",
+      "c": "Refreshing more often increases load without addressing the bottleneck."
+    },
+    "hint": "Which tool remembers a frequently requested answer?",
+    "xp": 20
+  }
+]

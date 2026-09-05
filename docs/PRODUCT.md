@@ -8,11 +8,11 @@ ByteScroll reduces that activation energy without making learning passive.
 
 ## Target user
 
-The first user is a beginner who wants to learn Python but struggles to begin consistent practice. They have a phone, five to ten minutes, and little appetite for a traditional lesson first thing in the morning.
+The first user is a beginner who wants to learn Python or system design but struggles to begin consistent practice. They have a phone, five to ten minutes, and little appetite for a traditional lesson first thing in the morning.
 
 ## Core promise
 
-> In ten intentional scrolls, learn or reinforce one useful Python idea.
+> In ten intentional scrolls, learn or reinforce one useful technical idea.
 
 ## MVP loop
 

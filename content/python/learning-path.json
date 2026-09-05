@@ -1,0 +1,146 @@
+[
+  {
+    "id": "py-learn-variables",
+    "kind": "learn",
+    "concept": "Variables",
+    "title": "Give a value a useful name",
+    "body": "A variable is a name that points to a value. Python uses the equals sign to connect the name on the left with the value on the right.",
+    "code": "name = \"Adi\"\nscore = 10",
+    "takeaway": "Read = as ‘becomes’ rather than ‘equals.’",
+    "xp": 5
+  },
+  {
+    "id": "py-see-variables",
+    "kind": "example",
+    "concept": "Variables",
+    "title": "A name can point to a new value",
+    "body": "Python reads the current score, adds five, and then makes score point to the result.",
+    "code": "score = 10\nscore = score + 5\nprint(score)  # 15",
+    "takeaway": "Reassignment replaces the value associated with the name.",
+    "xp": 5
+  },
+  {
+    "id": "py-quiz-variables",
+    "kind": "quiz",
+    "concept": "Variables",
+    "title": "Your turn: follow the value",
+    "body": "What does this program print?",
+    "code": "coins = 4\ncoins = coins + 3\nprint(coins)",
+    "options": [
+      { "id": "a", "label": "4" },
+      { "id": "b", "label": "7" },
+      { "id": "c", "label": "coins + 3" }
+    ],
+    "correct_option_id": "b",
+    "explanation": "coins begins at 4. The second line adds 3 and reassigns the result, so the printed value is 7.",
+    "wrong_feedback": {
+      "a": "That is the original value. Look at the reassignment on line two.",
+      "c": "Python evaluates the expression before assigning it; it does not store the expression as text."
+    },
+    "hint": "Trace coins one line at a time: 4, then 4 + 3.",
+    "xp": 15
+  },
+  {
+    "id": "py-learn-types",
+    "kind": "learn",
+    "concept": "Data types",
+    "title": "Values come in different shapes",
+    "body": "Python uses types to decide what operations make sense. Integers are whole numbers, floats contain decimals, strings are text, and booleans are True or False.",
+    "code": "age = 24          # int\nprice = 4.50      # float\ncity = \"Boston\"  # str\nready = True      # bool",
+    "takeaway": "The type belongs to the value, and Python can inspect it with type().",
+    "xp": 5
+  },
+  {
+    "id": "py-see-types",
+    "kind": "example",
+    "concept": "Data types",
+    "title": "Convert text before doing math",
+    "body": "Input often arrives as text. int() converts numeric text into a whole number that Python can add.",
+    "code": "age_text = \"24\"\nage_next_year = int(age_text) + 1\nprint(age_next_year)  # 25",
+    "takeaway": "\"24\" is text; 24 is a number.",
+    "xp": 5
+  },
+  {
+    "id": "py-quiz-types",
+    "kind": "quiz",
+    "concept": "Data types",
+    "title": "Your turn: spot the result type",
+    "body": "In Python 3, the / operator always returns a float. What is printed?",
+    "code": "result = 8 / 2\nprint(result)",
+    "options": [
+      { "id": "a", "label": "4" },
+      { "id": "b", "label": "4.0" },
+      { "id": "c", "label": "A TypeError" }
+    ],
+    "correct_option_id": "b",
+    "explanation": "Regular division uses / and returns a float, even when the mathematical answer is a whole number.",
+    "wrong_feedback": {
+      "a": "The value is four, but / represents it as a float: 4.0.",
+      "c": "Both operands are numbers, so division is valid."
+    },
+    "hint": "Remember the lesson’s rule for the / operator.",
+    "xp": 15
+  },
+  {
+    "id": "py-learn-conditionals",
+    "kind": "learn",
+    "concept": "Conditionals",
+    "title": "Let your program make a decision",
+    "body": "An if statement runs an indented block only when its condition is True. The colon begins the block and indentation shows what belongs inside it.",
+    "code": "temperature = 72\nif temperature > 70:\n    print(\"Warm day\")",
+    "takeaway": "Condition, colon, then an indented action.",
+    "xp": 5
+  },
+  {
+    "id": "py-see-conditionals",
+    "kind": "example",
+    "concept": "Conditionals",
+    "title": "Choose between two paths",
+    "body": "else supplies the path Python follows when the if condition is False.",
+    "code": "is_raining = False\nif is_raining:\n    print(\"Take an umbrella\")\nelse:\n    print(\"Travel light\")",
+    "takeaway": "Only one branch in this if/else pair will run.",
+    "xp": 5
+  },
+  {
+    "id": "py-quiz-conditionals",
+    "kind": "quiz",
+    "concept": "Conditionals",
+    "title": "Your turn: choose the branch",
+    "body": "Which message does Python print?",
+    "code": "score = 82\nif score >= 90:\n    print(\"Excellent\")\nelse:\n    print(\"Keep growing\")",
+    "options": [
+      { "id": "a", "label": "Excellent" },
+      { "id": "b", "label": "Keep growing" },
+      { "id": "c", "label": "Both messages" }
+    ],
+    "correct_option_id": "b",
+    "explanation": "82 is not greater than or equal to 90, so the if condition is False and the else branch runs.",
+    "wrong_feedback": {
+      "a": "Check whether 82 satisfies the >= 90 condition.",
+      "c": "An if/else pair selects one branch, not both."
+    },
+    "hint": "Evaluate 82 >= 90 before looking at either print statement.",
+    "xp": 15
+  },
+  {
+    "id": "py-review-foundations",
+    "kind": "review",
+    "concept": "Variables",
+    "title": "Quick review: combine the ideas",
+    "body": "Trace the variable, then evaluate the condition. What is printed?",
+    "code": "level = 2\nlevel = level + 1\nif level == 3:\n    print(\"Unlocked\")",
+    "options": [
+      { "id": "a", "label": "Unlocked" },
+      { "id": "b", "label": "Nothing" },
+      { "id": "c", "label": "A SyntaxError" }
+    ],
+    "correct_option_id": "a",
+    "explanation": "level becomes 3, making level == 3 true. Python enters the indented block and prints Unlocked.",
+    "wrong_feedback": {
+      "b": "Trace the reassignment before evaluating the condition.",
+      "c": "The assignment, condition, colon, and indentation are all valid Python."
+    },
+    "hint": "What value does level have after line two?",
+    "xp": 20
+  }
+]

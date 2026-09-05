@@ -1,6 +1,5 @@
 from contextlib import asynccontextmanager
-from datetime import date, datetime, timezone
-from random import Random
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, HTTPException, Query
@@ -8,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .curriculum import CARDS, CARD_INDEX, public_card
+from .curriculum import CARD_INDEX, TRACK_CARDS, public_card
 from .database import Base, engine, get_db
 from .models import Attempt
 from .schemas import AttemptCreate, AttemptResult, DailySessionOut, ProgressOut
@@ -44,12 +43,13 @@ def health() -> dict[str, str]:
 @app.get("/api/v1/sessions/daily", response_model=DailySessionOut)
 def daily_session(
     learner_id: str = Query(default="demo-learner", min_length=1, max_length=100),
+    track_id: str = Query(default="python", pattern="^(python|system-design)$"),
     limit: int = Query(default=10, ge=1, le=10),
 ) -> dict:
-    cards = CARDS.copy()
-    Random(f"{date.today().isoformat()}:{learner_id}").shuffle(cards)
+    cards = TRACK_CARDS[track_id]
     return {
         "session_id": str(uuid4()),
+        "track_id": track_id,
         "generated_at": datetime.now(timezone.utc),
         "cards": [public_card(card) for card in cards[:limit]],
     }
@@ -61,7 +61,10 @@ def create_attempt(payload: AttemptCreate, db: Session = Depends(get_db)) -> dic
     if card is None:
         raise HTTPException(status_code=404, detail="Learning card not found")
 
-    option_ids = {option["id"] for option in card["options"]}
+    if card["kind"] not in {"quiz", "review"}:
+        raise HTTPException(status_code=422, detail="This learning card does not accept answers")
+
+    option_ids = {option["id"] for option in card.get("options", [])}
     if payload.selected_option_id not in option_ids:
         raise HTTPException(status_code=422, detail="Selected option does not belong to this card")
 

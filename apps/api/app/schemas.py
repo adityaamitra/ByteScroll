@@ -10,18 +10,20 @@ class OptionOut(BaseModel):
 
 class CardOut(BaseModel):
     id: str
-    type: str
-    level: str
+    kind: str
     concept: str
-    eyebrow: str
     title: str
-    prompt: str
+    body: str
     code: str | None = None
-    options: list[OptionOut]
+    visual: str | None = None
+    takeaway: str | None = None
+    hint: str | None = None
+    options: list[OptionOut] = Field(default_factory=list)
 
 
 class DailySessionOut(BaseModel):
     session_id: str
+    track_id: str
     generated_at: datetime
     cards: list[CardOut]
 
