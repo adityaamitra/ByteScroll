@@ -3,10 +3,13 @@ import { normalizeProgress, type LearnerProgress } from "@/lib/progress";
 
 let browserClient: SupabaseClient | null = null;
 
+function getBrowserKey(): string | undefined {
+  return process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+    ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+}
+
 export function cloudSyncConfigured(): boolean {
-  return Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  );
+  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && getBrowserKey());
 }
 
 export function getCloudClient(): SupabaseClient | null {
@@ -14,7 +17,7 @@ export function getCloudClient(): SupabaseClient | null {
   if (!browserClient) {
     browserClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL as string,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string,
+      getBrowserKey() as string,
     );
   }
   return browserClient;

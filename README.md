@@ -90,7 +90,7 @@ ByteScroll uses guest mode until Supabase is configured.
 cp apps/web/.env.example apps/web/.env.local
 ```
 
-Only the public project URL and anon key belong in `NEXT_PUBLIC_*` variables. Row-level security restricts every progress record to its authenticated owner.
+Only the project URL and browser-safe publishable key belong in `NEXT_PUBLIC_*` variables. The older `NEXT_PUBLIC_SUPABASE_ANON_KEY` name remains supported for existing deployments. Never expose a Supabase secret or service-role key; row-level security restricts every progress record to its authenticated owner.
 
 ## Run the API
 
