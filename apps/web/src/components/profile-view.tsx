@@ -11,12 +11,11 @@ interface ProfileViewProps {
   cloudConfigured: boolean;
   syncStatus: "local" | "syncing" | "synced" | "error";
   onSettingsChange: (settings: Partial<LearnerSettings>) => void;
-  onGoogleSignIn: () => Promise<void>;
   onMagicLink: (email: string) => Promise<void>;
   onSignOut: () => Promise<void>;
 }
 
-export function ProfileView({ progress, user, cloudConfigured, syncStatus, onSettingsChange, onGoogleSignIn, onMagicLink, onSignOut }: ProfileViewProps) {
+export function ProfileView({ progress, user, cloudConfigured, syncStatus, onSettingsChange, onMagicLink, onSignOut }: ProfileViewProps) {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
@@ -46,15 +45,14 @@ export function ProfileView({ progress, user, cloudConfigured, syncStatus, onSet
             </div>
           ) : cloudConfigured ? (
             <div className="auth-options">
-              <button className="google-button" onClick={onGoogleSignIn}><span>G</span> Continue with Google</button>
-              <div className="auth-divider"><span>or use a magic link</span></div>
+              <p className="auth-copy">Enter your email and we&apos;ll send you a secure sign-in link. No password needed.</p>
               <div className="email-row"><input type="email" value={email} placeholder="you@example.com" aria-label="Email address" onChange={(event) => setEmail(event.target.value)} /><button onClick={sendMagicLink}>Send link</button></div>
               {message && <p className="form-message">{message}</p>}
             </div>
           ) : (
             <div className="sync-placeholder">
               <span><LockIcon /></span>
-              <div><strong>Guest mode is active</strong><p>Your progress is safely stored on this device. Connect the included Supabase setup when you&apos;re ready to enable secure Google and email sign-in.</p></div>
+              <div><strong>Guest mode is active</strong><p>Your progress is safely stored on this device. Connect the included Supabase setup when you&apos;re ready to enable secure email sign-in.</p></div>
             </div>
           )}
         </section>

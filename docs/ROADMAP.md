@@ -16,7 +16,7 @@ The application integration and database migration are ready. Remaining deployme
 
 - create the Supabase project;
 - apply the included migration;
-- configure email and Google providers;
+- configure email magic-link authentication;
 - add production redirect URLs; and
 - set the two public environment variables in Vercel.
 

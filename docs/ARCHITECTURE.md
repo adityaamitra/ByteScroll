@@ -37,7 +37,7 @@ Each track owns:
 
 ## Authentication and sync
 
-The client uses Supabase Auth only when public project configuration is present. Google OAuth and email magic links are supported. ByteScroll never handles or stores passwords.
+The client uses Supabase Auth only when public project configuration is present. Passwordless email magic links are supported. ByteScroll never handles or stores passwords.
 
 The `learner_progress` table uses the authenticated user ID as its primary key. Select, insert, and update policies require `auth.uid() = user_id`. No service-role credential is sent to the browser.
 

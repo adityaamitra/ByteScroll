@@ -82,7 +82,7 @@ ByteScroll uses guest mode until Supabase is configured.
 
 1. Create a Supabase project.
 2. Run `supabase/migrations/001_learner_progress.sql` in its SQL editor.
-3. Configure email magic links and, optionally, Google OAuth in Supabase Auth.
+3. Keep email magic-link authentication enabled in Supabase Auth.
 4. Add local and production URLs to the allowed redirect URLs.
 5. Copy the environment template and add the project values:
 

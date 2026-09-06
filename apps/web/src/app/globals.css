@@ -254,10 +254,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .signed-in-card small { color: var(--muted); margin-top: .2rem; font-size: .72rem; }
 .text-button { border: 0; color: var(--muted); background: none; font-size: .75rem; cursor: pointer; }
 .auth-options { margin-top: 1.5rem; }
-.google-button { width: 100%; min-height: 3rem; border-radius: .8rem; border: 1px solid var(--line); color: var(--text); background: white; color: #191919; font-weight: 700; cursor: pointer; }
-.google-button span { margin-right: .5rem; color: #4285f4; font-weight: 900; }
-.auth-divider { margin: 1rem 0; display: flex; align-items: center; gap: .7rem; color: var(--muted); font-size: .68rem; }
-.auth-divider::before, .auth-divider::after { content: ""; height: 1px; background: var(--line); flex: 1; }
+.auth-copy { margin: 0 0 1rem; color: var(--text-soft); font-size: .82rem; line-height: 1.55; }
 .email-row { display: grid; grid-template-columns: 1fr auto; gap: .5rem; }
 .email-row input, .preferences-panel select { min-height: 2.9rem; border-radius: .75rem; border: 1px solid var(--line); color: var(--text); background: rgba(255,255,255,.035); padding: 0 .85rem; font-size: .82rem; }
 .email-row button { min-height: 2.9rem; padding: 0 1rem; border: 0; border-radius: .75rem; color: #0b1711; background: var(--mint); font-size: .78rem; font-weight: 800; cursor: pointer; }

@@ -132,16 +132,6 @@ export function LearningFeed() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  async function signInWithGoogle() {
-    const client = getCloudClient();
-    if (!client) return;
-    const { error } = await client.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: window.location.origin },
-    });
-    if (error) throw error;
-  }
-
   async function sendMagicLink(email: string) {
     const client = getCloudClient();
     if (!client) return;
@@ -191,7 +181,6 @@ export function LearningFeed() {
             cloudConfigured={cloudConfigured}
             syncStatus={syncStatus}
             onSettingsChange={changeSettings}
-            onGoogleSignIn={signInWithGoogle}
             onMagicLink={sendMagicLink}
             onSignOut={signOut}
           />
