@@ -1,96 +1,146 @@
 # ByteScroll
 
-> Trade scrolling for skill.
+<p align="center">
+  <strong>Trade scrolling for skill.</strong><br />
+  A mobile-first learning feed for Python, data structures and algorithms, and system design.
+</p>
 
-[**Try the live app →**](https://bytescroll.vercel.app)
+<p align="center">
+  <a href="https://bytescroll.vercel.app"><strong>Open the live app →</strong></a>
+</p>
 
-ByteScroll is a mobile-first learning feed that replaces passive morning scrolling with short, structured Python and system design lessons. Every session teaches first, shows a concrete example, asks the learner to try, explains the result, and pauses at a learner-chosen checkpoint.
+<p align="center">
+  <a href="https://github.com/adityaamitra/ByteScroll/actions/workflows/ci.yml"><img alt="CI status" src="https://github.com/adityaamitra/ByteScroll/actions/workflows/ci.yml/badge.svg" /></a>
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-15-000000?logo=next.js" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" />
+  <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white" />
+  <img alt="Supabase" src="https://img.shields.io/badge/Supabase-Auth%20%2B%20Postgres-3FCF8E?logo=supabase&logoColor=white" />
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a>
+</p>
 
-## Why ByteScroll
+## The idea
 
-Infinite feeds remove stopping cues. Traditional learning tools often add too much activation energy. ByteScroll borrows the ease of short-form content while changing the loop:
+Short-form feeds are effortless to open and difficult to leave. Traditional learning products often create the opposite experience: choosing a course, finding your place, and committing to a long lesson.
 
-```text
-Learn → See → Try → Understand → Review → Stop
+ByteScroll keeps the low-friction interaction while changing the outcome. A learner opens the app and immediately moves through a curated sequence:
+
+**Learn → See an example → Answer → Understand → Review**
+
+Every session pauses at an explicit checkpoint. The learner can stop, review mistakes, or deliberately continue—there is no automatic infinite feed.
+
+## Product highlights
+
+| Area | What ByteScroll provides |
+| --- | --- |
+| Learning | 18 modules and 164 curated cards across two independent tracks |
+| Session design | 5, 10, or 20-card starting checkpoints with optional `Continue +5` |
+| Retention | Due-card scheduling, expanding review intervals, and immediate mistake review |
+| Feedback | Hints, answer explanations, misconception feedback, and confidence checks |
+| Progress | XP, accuracy, streaks, activity history, mastery, bookmarks, and resumable sessions |
+| Accounts | Guest mode plus passwordless email login and cross-device progress sync |
+| Mobile | Responsive interface, bottom navigation, safe-area support, and installable PWA |
+| Cost | Fully useful without a generative-AI API or paid model dependency |
+
+## Curriculum
+
+Both tracks teach concepts before testing them. Modules unlock progressively while each track preserves its own session, mastery, and review state.
+
+| Python and algorithms | System design |
+| --- | --- |
+| Python foundations | System design foundations |
+| Loops and functions | Web and networking |
+| Python collections | Data and storage |
+| Practical Python and OOP | Scaling and delivery |
+| Complexity, arrays, and hashing | Asynchronous systems |
+| Linear structures and recursion | Distributed systems |
+| Trees, heaps, and graphs | Reliability and operations |
+| Search, sorting, and greedy thinking | Security and abuse control |
+| Backtracking and dynamic programming | Design case studies |
+
+## How sessions adapt
+
+1. Due review cards are placed first.
+2. Unseen cards continue from the learner's selected module.
+3. Concepts below the mastery threshold receive extra practice.
+4. A wrong answer returns sooner; successful recall increases its review interval.
+5. At the checkpoint, the learner chooses whether to finish or add five more cards.
+
+Progress is stored locally for guests. After passwordless sign-in, the same versioned progress document is synchronized to Supabase and protected with row-level security.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    U["Mobile or desktop learner"] --> W["Next.js PWA"]
+    C["Versioned course content"] --> W
+    W --> L["Guest progress on device"]
+    W --> S["Supabase Auth and Postgres"]
+    A["FastAPI learning service"] -. "backend foundation" .-> W
 ```
 
-- Lessons take seconds to begin.
-- Explanations come before fair, focused questions.
-- Wrong answers generate targeted feedback and a review item.
-- Python and system design maintain independent mastery paths.
-- Sessions start with 5, 10, or 20 cards, then continue in optional five-card blocks.
+The deployed web experience reads curated course content directly, so learning remains available without the FastAPI service. The API is included as a production-oriented boundary for trusted grading, server-generated sessions, and progress aggregation.
 
-## Current experience
-
-- Mobile-first learning interface with persistent bottom navigation
-- Python and System Design track switching
-- 18 modules and 164 curated cards across both paths
-- Python from variables through OOP, data structures, algorithms, and dynamic programming
-- System Design from requests through data, scaling, distributed systems, reliability, security, and case studies
-- Teaching, worked examples, quizzes, and review cards
-- Progressive hints and misconception-specific feedback
-- Confidence check after each answer
-- XP, levels, streaks, accuracy, activity, and concept mastery
-- Resumable sessions, configurable checkpoints, unlimited continuation, and bookmarked cards
-- Adaptive queues: missed cards return sooner and successful recall increases the interval
-- First-run learning preferences
-- Installable PWA with offline shell support
-- Device-local progress with optional Supabase account sync
-- FastAPI endpoints for server-side sessions, grading, and progress aggregation
-- No generative AI dependency or AI usage cost
-
-## Tech stack
+## Technology
 
 | Layer | Technology |
 | --- | --- |
-| Web | Next.js, React, TypeScript, CSS |
-| Accounts and sync | Optional Supabase Auth + PostgreSQL with row-level security |
+| Web application | Next.js 15, React 19, TypeScript, CSS |
+| Authentication and sync | Supabase Auth, PostgreSQL, row-level security |
 | Learning API | FastAPI, Pydantic, SQLAlchemy |
-| Content | Version-controlled JSON foundations and typed course modules |
-| Quality | TypeScript, Pytest, GitHub Actions |
+| Content engine | Typed course modules and version-controlled JSON |
+| Offline experience | Web app manifest and service worker |
+| Quality | TypeScript checks, Pytest, GitHub Actions |
 | Deployment | Vercel |
 
 ## Repository structure
 
 ```text
-bytescroll/
+ByteScroll/
 ├── apps/
-│   ├── web/                         # Next.js PWA
+│   ├── web/                         # Next.js learning PWA
 │   └── api/                         # FastAPI service and tests
 ├── content/
-│   ├── python/learning-path.json
-│   └── system-design/foundations.json
-├── supabase/migrations/             # Secure progress-sync schema
-├── docs/                            # Product and architecture notes
-└── .github/workflows/               # Continuous integration
+│   ├── course-catalog.json          # Public track and module catalog
+│   ├── python/                      # Python foundation content
+│   └── system-design/               # System Design foundation content
+├── supabase/migrations/             # Progress table and RLS policies
+├── docs/                            # Product, architecture, and roadmap notes
+└── .github/workflows/               # Web and API continuous integration
 ```
 
-## Run the web app
+## Run locally
 
 Requirements: Node.js 20 or newer.
 
 ```bash
+git clone https://github.com/adityaamitra/ByteScroll.git
+cd ByteScroll
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Accounts are optional; progress works locally without environment variables.
+Open [http://localhost:3000](http://localhost:3000). ByteScroll starts in guest mode and saves progress on the device, so Supabase is not required for local learning.
 
-## Enable login and cross-device sync
-
-ByteScroll uses guest mode until Supabase is configured.
+### Enable account sync
 
 1. Create a Supabase project.
-2. Run `supabase/migrations/001_learner_progress.sql` in its SQL editor.
-3. Keep email magic-link authentication enabled in Supabase Auth.
-4. Add local and production URLs to the allowed redirect URLs.
-5. Copy the environment template and add the project values:
+2. Run [`supabase/migrations/001_learner_progress.sql`](supabase/migrations/001_learner_progress.sql) in the Supabase SQL editor.
+3. Keep passwordless email authentication enabled.
+4. Add your local and production URLs under Supabase Auth URL Configuration.
+5. Copy the environment template:
 
 ```bash
 cp apps/web/.env.example apps/web/.env.local
 ```
 
-Only the project URL and browser-safe publishable key belong in `NEXT_PUBLIC_*` variables. The older `NEXT_PUBLIC_SUPABASE_ANON_KEY` name remains supported for existing deployments. Never expose a Supabase secret or service-role key; row-level security restricts every progress record to its authenticated owner.
+6. Add the browser-safe project values:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your-key
+```
+
+Never expose a Supabase secret or service-role key. The included row-level security policies restrict each progress record to its authenticated owner. The legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY` variable remains supported for older deployments.
 
 ## Run the API
 
@@ -104,49 +154,45 @@ pip install -r requirements-dev.txt
 uvicorn app.main:app --reload
 ```
 
-Interactive documentation is available at [http://localhost:8000/docs](http://localhost:8000/docs).
+Open [http://localhost:8000/docs](http://localhost:8000/docs) for interactive API documentation, or run the tests with:
 
 ```bash
 pytest
 ```
 
-## API surface
+### API surface
 
 | Method | Route | Purpose |
 | --- | --- | --- |
 | `GET` | `/health` | Service health check |
-| `GET` | `/api/v1/catalog` | List both complete course paths and their modules |
-| `GET` | `/api/v1/sessions/daily?track_id=python` | Return an ordered starter session without answers |
+| `GET` | `/api/v1/catalog` | List tracks and course modules |
+| `GET` | `/api/v1/sessions/daily?track_id=python` | Return an answer-safe starter session |
 | `POST` | `/api/v1/attempts` | Grade and persist an answer |
 | `GET` | `/api/v1/progress/{learner_id}` | Aggregate XP, accuracy, and mastery |
 
 ## Product principles
 
-**Teach before testing.** A beginner should never feel that ByteScroll is examining knowledge it did not explain.
+- **Teach before testing.** Beginners should not be examined on ideas the product has not explained.
+- **Earn attention; do not trap it.** Checkpoints are explicit and continuing is always a choice.
+- **Measure retention, not taps.** Delayed recall matters more than raw time in the app.
+- **Keep content reviewable.** Canonical explanations and answers remain curated and version-controlled.
+- **Stay useful without AI costs.** Generative tutoring is optional, never a requirement for the core experience.
 
-**Earn attention; do not trap it.** Checkpoints are explicit, streaks are non-punitive, and continuing is always the learner's choice.
+## Project status
 
-**Measure retention, not taps.** Review queues and delayed recall matter more than raw time in the app.
+ByteScroll v1 is complete and deployed.
 
-**Keep content reviewable.** The current tutor experience uses curated explanations, hints, and targeted feedback. Generative AI is an optional future adapter, not a requirement.
+- [x] Complete Python/DSA and advanced System Design paths
+- [x] Adaptive sessions and spaced review
+- [x] Mobile-responsive installable PWA
+- [x] Passwordless accounts and cross-device sync
+- [x] Continuous integration and Vercel deployment
+- [ ] Sandboxed Python coding exercises
+- [ ] Weekly guided mini-projects
+- [ ] Interactive system-design workspace
 
-## Roadmap
-
-- [x] Teach-before-quiz sessions with flexible checkpoints
-- [x] Mobile navigation and responsive learning surface
-- [x] Full Python/DSA and advanced System Design learning paths
-- [x] Progress dashboard, activity tracker, and session resume
-- [x] Adaptive spaced-repetition scheduling and mistake review
-- [x] Installable PWA
-- [x] Optional Supabase authentication and sync foundation
-- [ ] Connect the deployed project to Supabase
-- [ ] Safe sandboxed Python exercises
-- [ ] Weekly mini-projects
-- [ ] Interactive system-design builder
-- [ ] Optional provider-based AI tutor
-
-See [docs/ROADMAP.md](docs/ROADMAP.md) for acceptance criteria.
+See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the longer-term product direction.
 
 ## License
 
-MIT © 2026 Aditya Mitra
+Released under the [MIT License](LICENSE). Copyright © 2026 Aditya Mitra.

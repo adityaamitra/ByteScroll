@@ -10,15 +10,14 @@
 - Resumable local sessions
 - Installable PWA metadata and offline shell
 
-## Phase 2 — Activate accounts and sync
+## Phase 2 — Activate accounts and sync (complete)
 
-The application integration and database migration are ready. Remaining deployment work:
+The production deployment now includes:
 
-- create the Supabase project;
-- apply the included migration;
-- configure email magic-link authentication;
-- add production redirect URLs; and
-- set the two public environment variables in Vercel.
+- a configured Supabase project and production redirect URLs;
+- the versioned `learner_progress` migration and row-level security;
+- passwordless email magic-link authentication; and
+- browser-safe environment configuration in Vercel.
 
 Acceptance criteria:
 
